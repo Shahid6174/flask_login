@@ -17,7 +17,6 @@
 </head>
 
 <body>
-
     <nav class="bg-nav navbar navbar-expand-lg" style="background-color: #e3f2fd;">
         <div class="container-fluid">
             <a class="navbar-brand text-light" href="/home">HomeGlam</a>
@@ -41,6 +40,7 @@
             <span class="nav-item" >
                 <a class="form-control me-2" href="{{url_for('login')}}" style="text-decoration:none; color:black;">Logout</a>
             </span>
+
             <!-- <form class="d-flex ms-auto" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
@@ -48,6 +48,7 @@
         </div>
     </nav>
 
+    <h1>Welcome, {{ username }}</h1>
 
     <div class="container mt-4">
         <div class="row">

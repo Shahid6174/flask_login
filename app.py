@@ -13,15 +13,15 @@ db = SQLAlchemy(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(40), nullable=False)
     email = db.Column(db.String(40), unique=True, nullable=False)
     password_hash = db.Column(db.String(150), nullable=False)
     
-    def set_password(self,password):
-        self.password_hash =  generate_password_hash(password)
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
     
     def check_password(self, password):
-        return check_password_hash(self.password_hash ,password)
-    
+        return check_password_hash(self.password_hash, password)
 
 @app.route('/')
 @app.route('/login')
@@ -29,12 +29,17 @@ def login():
     return render_template('login.html')
 
 @app.route('/register')
-def about():
+def register():
     return render_template('register.html')
 
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    # Fetch the username from the query parameters passed in the redirect
+    username = request.args.get('username')
+    if 'email' in session:
+        return render_template('home.html', username=username)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/login_validation', methods=['POST'])
 def login_validation():
@@ -43,27 +48,27 @@ def login_validation():
     user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
         session['email'] = email
-        return redirect(url_for('home'))  # Fixing this line
-
+        username = user.username  # Fetch the username from the User model
+        return redirect(url_for('home', username=username))  # Redirect with username
     else:
         return render_template('login.html', error="Wrong Password/Email!")
-    
 
 @app.route('/reg_validation', methods=['POST'])
 def reg_validation():
+    username = request.form.get('name')
     email = request.form.get('email')
     password = request.form.get('password')
     user = User.query.filter_by(email=email).first()
+    
     if user:
         return render_template("register.html", error="User Already Here!")
     else:
-        new_user = User(email=email)
+        new_user = User(username=username, email=email)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
         session['email'] = email
-        return redirect(url_for('home'))
-        
+        return redirect(url_for('home', username=username))  # Redirect with username
 
 if __name__ == "__main__":
     with app.app_context():
