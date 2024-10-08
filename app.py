@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from validate_email_address import validate_email
 
 app = Flask(__name__)
 
@@ -45,6 +46,10 @@ def home():
 def login_validation():
     email = request.form.get('email')
     password = request.form.get('password')
+    
+    if not validate_email(email):
+        return render_template('login.html', error="Invalid Email Format!")
+    
     user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
         session['email'] = email
@@ -59,6 +64,9 @@ def reg_validation():
     email = request.form.get('email')
     password = request.form.get('password')
     user = User.query.filter_by(email=email).first()
+    
+    if not validate_email(email):
+        return render_template('login.html', error="Invalid Email Format!")
     
     if user:
         return render_template("register.html", error="User Already Here!")
