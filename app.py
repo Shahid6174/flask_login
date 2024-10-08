@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from validate_email_address import validate_email
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 app = Flask(__name__)
 
